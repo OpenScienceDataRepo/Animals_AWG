@@ -1,0 +1,80 @@
+#load library
+library(ggplot2)
+library(tidyverse)
+library(scales)
+library(RColorBrewer)
+
+#load data
+spleen.metrics.df <- read_csv("spleen_FLT_GC_qc_metrics.csv")
+
+#prepare data for transcriptome alignment
+transcriptome.alignment.spleen.metrics.df <- spleen.metrics.df %>% select(osd_num, pct_uniquely_aligned, pct_multi_aligned, pct_unalignable)
+
+#Add new a column for library_kit
+transcriptome.alignment.spleen.metrics.df <-  transcriptome.alignment.spleen.metrics.df %>% 
+  mutate(library_kit= recode(osd_num,
+                             "OSD-164"="polyA-nonUPX kit",
+                             "OSD-246"="ribo-deplete kit",
+                             "OSD-288"="ribo-deplete kit",
+                             "OSD-420"="polyA-UPX kit",
+                             "OSD-457"="polyA-nonUPX kit",
+                             "OSD-506"="ribo-deplete kit"))
+
+# Box_plot1: uniquely aligned percentage of indivisual datasets to transcriptome
+
+ggplot(transcriptome.alignment.spleen.metrics.df, aes(x = osd_num, y= pct_uniquely_aligned, fill = osd_num)) +
+  geom_boxplot(linewidth = 0.1, varwidth = TRUE) +
+  stat_boxplot(geom = "errorbar", width = 0.2, size= 0.1)+
+  scale_y_continuous(breaks = pretty_breaks(n = 8))+ 
+  scale_fill_brewer(palette = "Set2")+
+  labs(title = "Uniquely Aligned Percentage of Individual Spleen Datasets", x = "OSD-number", y = "Uniquely aligned (%)") +
+  theme_classic() +
+  theme(legend.position = "none")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+ggsave("transcriptome_unique_alignment_spleen_individual_datasets_MA.png", dpi = 300,
+       width = 6.7, height = 4, units = "in") 
+
+# Box_plot2: total aligned percentage of indivisual datasets to transcriptome
+ggplot(transcriptome.alignment.spleen.metrics.df, aes(x = osd_num, y= (pct_uniquely_aligned+pct_multi_aligned), fill = osd_num)) +
+  geom_boxplot(linewidth = 0.1, varwidth = TRUE) +
+  stat_boxplot(geom = "errorbar", width = 0.2, size= 0.1)+
+  scale_y_continuous(breaks = pretty_breaks(n = 10))+ 
+  scale_fill_brewer(palette = "Set2")+
+  labs(title = "Total Aligned Percentage of Individual Spleen Datasets", x = "OSD-number", y = "Total aligned (%)") +
+  theme_classic() +
+  theme(legend.position = "none")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+ggsave("transcriptome_total_alignment_spleen_individual_datasets_MA.png", dpi = 300,
+       width = 6.7, height = 4, units = "in") 
+
+# Box_plot3: percentage of uniquely aligned data to transcriptome by library kit
+ggplot(transcriptome.alignment.spleen.metrics.df, aes(x = osd_num, y= pct_uniquely_aligned, fill = osd_num)) +
+  geom_boxplot(linewidth = 0.1, varwidth = TRUE) +
+  stat_boxplot(geom = "errorbar", width = 0.2, size= 0.1)+
+  facet_wrap(~library_kit, scales = "free_x", drop = TRUE)+
+  scale_y_continuous(breaks = pretty_breaks(n = 8))+ 
+  scale_fill_brewer(palette = "Set2")+
+  labs(title = "Uniquely Aligned Percentage of Spleen Datasets by Library Kits", x = "OSD-number", y = "Uniquely aligned (%)") +
+  theme_classic() +
+  theme(legend.position = "none")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+ggsave("transcriptome_unique_alignment_spleen_libraryKits_MA.png", dpi = 300,
+       width = 6.7, height = 4, units = "in") 
+
+# Box_plot4: percentage of total aligned data to transcriptome by library kit
+ggplot(transcriptome.alignment.spleen.metrics.df, aes(x = osd_num, y= (pct_uniquely_aligned+pct_multi_aligned), fill = osd_num)) +
+  geom_boxplot(linewidth = 0.1, varwidth = TRUE) +
+  stat_boxplot(geom = "errorbar", width = 0.2, size= 0.1)+
+  facet_wrap(~library_kit, scales = "free_x", drop = TRUE)+
+  scale_y_continuous(breaks = pretty_breaks(n = 10))+ 
+  scale_fill_brewer(palette = "Set2")+
+  labs(title = "Total Aligned Percentage of Spleen Datasets by Library Kits", x = "OSD-number", y = "Total aligned (%)") +
+  theme_classic() +
+  theme(legend.position = "none")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+ggsave("transcriptome_total_alignment_spleen_libraryKits_MA.png", dpi = 300,
+       width = 6.7, height = 4, units = "in") 
