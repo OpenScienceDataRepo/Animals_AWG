@@ -1,0 +1,54 @@
+#load library
+library(ggplot2)
+library(tidyverse)
+library(scales)
+library(RColorBrewer)
+
+#load data
+spleen.metrics.df <- read_csv("spleen_FLT_GC_qc_metrics.csv")
+
+# prepare data for RseQC genebody coverage
+RseQC_genebody.spleen.metrics.df <-spleen.metrics.df %>%
+  select(osd_num, ratio_genebody_cov_3_to_5)
+
+# Add a new column for library kit
+RseQC_genebody.spleen.metrics.df <- RseQC_genebody.spleen.metrics.df %>% 
+  mutate(library_kit= recode(osd_num,
+                             "OSD-164"="polyA-nonUPX kit",
+                             "OSD-246"="ribo-deplete kit",
+                             "OSD-288"="ribo-deplete kit",
+                             "OSD-420"="polyA-UPX kit",
+                             "OSD-457"="polyA-nonUPX kit",
+                             "OSD-506"="ribo-deplete kit"))
+
+# Box_plot1: spleen_RseQC_geneBody_coverage_individual_datasets
+
+ggplot(RseQC_genebody.spleen.metrics.df, aes(x = osd_num, y = ratio_genebody_cov_3_to_5, fill = osd_num)) +
+  geom_boxplot(size = 0.1, varwidth = TRUE) +
+  stat_boxplot(geom = "errorbar", width = 0.2, size= 0.1)+
+  scale_y_continuous(breaks = pretty_breaks(n = 10))+ 
+  scale_fill_brewer(palette = "Set2")+
+  labs(title = "Gene Body Coverage of Individual Spleen Datasets", x = "OSD-number", y = "3' to 5' gene body coverage ratio") +
+  theme_classic() +
+  theme(legend.position = "none")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+ggsave("RseQC_geneBodyCoverage_spleen_indivisual_datasets_MA.png", dpi = 300,
+       width = 6.7, height = 4, units = "in")
+
+
+# Box_plot2: spleen_RseQC_geneBody_coverage by library kit
+ggplot(RseQC_genebody.spleen.metrics.df, aes(x = osd_num, y = ratio_genebody_cov_3_to_5, fill= osd_num)) +
+  geom_boxplot(size = 0.1, varwidth = TRUE) +
+  stat_boxplot(geom = "errorbar", width = 0.2, size= 0.1)+
+  facet_wrap(~library_kit, scales = "free_x", drop = TRUE)+
+  scale_y_continuous(breaks = pretty_breaks(n = 10))+ 
+  scale_fill_brewer(palette = "Set2") +
+  labs(title = "Gene Body Coverage of Spleen Datasets by Library Kits", x = "OSD-number", y = "3' to 5' gene body coverage ratio") +
+  theme_classic() +
+  theme(legend.position = "none")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+ggsave("RseQC_geneBodyCoverage_spleen_libraryKits_MA.png", dpi = 300,
+       width = 6.7, height = 4, units = "in")
+
