@@ -1,0 +1,53 @@
+#load library
+library(ggplot2)
+library(tidyverse)
+library(scales)
+library(RColorBrewer)
+
+#load data
+thymus.metrics.df <- read_csv("thymus_FLT_GC_qc_metrics.csv")
+
+# prepare data for RseQC infer experiment
+RseQC_inferExp.thymus.metrics.df <-thymus.metrics.df %>%
+  select(osd_num, pct_sense)
+
+# Add a new column for library kit
+RseQC_inferExp.thymus.metrics.df <- RseQC_inferExp.thymus.metrics.df %>% 
+  mutate(library_kit= recode(osd_num,
+                             "OSD-244"="ribo-deplete kit",
+                             "OSD-289"="ribo-deplete kit",
+                             "OSD-421"="polyA-UPX kit",
+                             "OSD-515"="ribo-deplete kit",
+                             "OSD-457"="ribo-deplete kit"))
+
+# Box_plot1: thymus_RseQC_strandedness_individual_datasets
+
+ggplot(RseQC_inferExp.thymus.metrics.df, aes(x = osd_num, y = pct_sense, fill = osd_num)) +
+  geom_boxplot(size = 0.1, varwidth = TRUE) +
+  stat_boxplot(geom = "errorbar", width = 0.2, size= 0.1)+
+  scale_y_continuous(breaks = pretty_breaks(n = 10))+ 
+  scale_fill_brewer(palette = "Set2")+
+  labs(title = "Strandedness of Individual Thymus Datasets", x = "OSD-number", y = "sense(%)") +
+  theme_classic() +
+  theme(legend.position = "none")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+ggsave("RseQC_strandedness_thymus_indivisual_datasets_MA.png", dpi = 300,
+       width = 6.7, height = 4, units = "in")
+
+
+# Box_plot2: thymus_RseQC_strandedness by library kit
+ggplot(RseQC_inferExp.thymus.metrics.df, aes(x = osd_num, y = pct_sense, fill = osd_num)) +
+  geom_boxplot(size = 0.1, varwidth = TRUE) +
+  stat_boxplot(geom = "errorbar", width = 0.2, size= 0.1)+
+  facet_wrap(~library_kit, scales = "free_x", drop = TRUE)+
+  scale_y_continuous(breaks = pretty_breaks(n = 10))+ 
+  scale_fill_brewer(palette = "Set2") +
+  labs(title = "Strandedness of Thymus Datasets by Library Kits", x = "OSD-number", y = "sense(%)") +
+  theme_classic() +
+  theme(legend.position = "none")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+ggsave("RseQC_strandedned_thymus_libraryKits_MA.png", dpi = 300,
+       width = 6.7, height = 4, units = "in")
+
