@@ -31,4 +31,4 @@ ggplot(rRNA_contamination.gastroc.metrics.df, aes(x = osd_num, y = rrna_contamin
   theme(plot.title = element_text(hjust = 0.5))
 
 ggsave("rRNA_contamination_gastroc_libraryKits_SAC.png", dpi = 300,
-       width = 8, height = 8, units = "in")
+       width = 7, height = 4, units = "in")

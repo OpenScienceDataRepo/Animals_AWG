@@ -32,7 +32,7 @@ ggplot(RseQC_read_distribution.gastroc.metrics.df, aes(x = osd_num, y = cds_exon
   theme(plot.title = element_text(hjust = 0.5))
 
 ggsave("RseQC_cds_exons_gastroc_libraryKits_SAC.png", dpi = 300,
-       width = 6.7, height = 4, units = "in")
+       width = 7.7, height = 4, units = "in")
 
 ## 5'UTRs---------------
 # Box_plot1: gastroc_RseQC_5'UTR by library kit
@@ -48,7 +48,7 @@ ggplot(RseQC_read_distribution.gastroc.metrics.df, aes(x = osd_num, y = `5_utr_e
   theme(plot.title = element_text(hjust = 0.5))
 
 ggsave("RseQC_5UTRs_gastroc_libraryKits_SAC.png", dpi = 300,
-       width = 6.7, height = 4, units = "in")
+       width = 7.7, height = 4, units = "in")
 
 ## 3' UTRs --------------
 # Box_plot1: gastroc_RseQC_3'UTR by library kit
@@ -64,7 +64,7 @@ ggplot(RseQC_read_distribution.gastroc.metrics.df, aes(x = osd_num, y = `3_utr_e
   theme(plot.title = element_text(hjust = 0.5))
 
 ggsave("RseQC_3UTRs_gastroc_libraryKits_SAC.png", dpi = 300,
-       width = 6.7, height = 4, units = "in")
+       width = 7.7, height = 4, units = "in")
 
 ## introns ------------
 # Box_plot1: gastroc_RseQC_3'UTR by library kit
@@ -80,7 +80,7 @@ ggplot(RseQC_read_distribution.gastroc.metrics.df, aes(x = osd_num, y = introns_
   theme(plot.title = element_text(hjust = 0.5))
 
 ggsave("RseQC_introns_gastroc_libraryKits_SAC.png", dpi = 300,
-       width = 6.7, height = 4, units = "in")
+       width = 7.7, height = 4, units = "in")
 
 ## tss_up 5 to 10 kb -------
 # Box_plot1: gastroc_RseQC_introns by library kit
@@ -96,4 +96,4 @@ ggplot(RseQC_read_distribution.gastroc.metrics.df, aes(x = osd_num, y = tss_up_5
   theme(plot.title = element_text(hjust = 0.5))
 
 ggsave("RseQC_tssUp5_gastroc_libraryKits_SAC.png", dpi = 300,
-       width = 6.7, height = 4, units = "in")
+       width = 8.3, height = 4, units = "in")

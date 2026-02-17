@@ -30,7 +30,7 @@ gastroc.metrics.df <- read_csv("gastrocnemius_qc_metrics.csv")
    theme(plot.title = element_text(hjust = 0.5))
 
  ggsave("genome_uniquely_mapped_gastroc_LibraryKits_SAC.png", dpi = 300,
-        width = 8, height = 8, units = "in")
+        width = 7, height = 4, units = "in")
 
 
  # Box_plot2: percentage of total mapped data by library kit
@@ -46,4 +46,4 @@ gastroc.metrics.df <- read_csv("gastrocnemius_qc_metrics.csv")
    theme(plot.title = element_text(hjust = 0.5))
 
  ggsave("genome_total_mapped_gastroc_LibraryKits_SAC.png", dpi = 300,
-        width = 8, height = 8, units = "in")
+        width = 7, height = 4, units = "in")

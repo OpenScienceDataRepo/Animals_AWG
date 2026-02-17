@@ -30,7 +30,7 @@ ggplot(transcriptome.alignment.gastroc.metrics.df, aes(x = osd_num, y= pct_uniqu
   theme(plot.title = element_text(hjust = 0.5))
 
 ggsave("transcriptome_unique_alignment_gastroc_libraryKits_SAC.png", dpi = 300,
-       width = 8, height = 8, units = "in")
+       width = 7.3, height = 4, units = "in")
 
 # Box_plot2: percentage of total aligned data to transcriptome by library kit
 ggplot(transcriptome.alignment.gastroc.metrics.df, aes(x = osd_num, y= (pct_uniquely_aligned+pct_multi_aligned), fill = osd_num)) +
@@ -45,4 +45,4 @@ ggplot(transcriptome.alignment.gastroc.metrics.df, aes(x = osd_num, y= (pct_uniq
   theme(plot.title = element_text(hjust = 0.5))
 
 ggsave("transcriptome_total_alignment_gastroc_libraryKits_SAC.png", dpi = 300,
-       width = 8, height = 8, units = "in")
+       width = 7.3, height = 4, units = "in")
