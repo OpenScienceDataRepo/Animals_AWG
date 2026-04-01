@@ -1,0 +1,180 @@
+#load library
+library(ggplot2)
+library(tidyverse)
+library(scales)
+library(RColorBrewer)
+
+#load data
+thymus.metrics.df <- read_csv("thymus_FLT_GC_qc_metrics.csv")
+
+
+# prepare data for RseQC read distributions
+RseQC_read_distribution.thymus.metrics.df <-thymus.metrics.df %>%
+  select(osd_num, cds_exons_pct,`5_utr_exons_pct`,`3_utr_exons_pct`,introns_pct, tss_up_5kb_10kb_pct)
+
+# Add a new column for library kit
+RseQC_read_distribution.thymus.metrics.df <- RseQC_read_distribution.thymus.metrics.df %>% 
+  mutate(library_kit= recode(osd_num,
+                             "OSD-244"="ribo-deplete kit",
+                             "OSD-289"="ribo-deplete kit",
+                             "OSD-421"="polyA-UPX kit",
+                             "OSD-515"="ribo-deplete kit",
+                             "OSD-457"="ribo-deplete kit"))
+
+# Box_plot1: thymus_RseQC_cds_exons_individual_datasets
+ggplot(RseQC_read_distribution.thymus.metrics.df, aes(x = osd_num, y = cds_exons_pct, fill = osd_num)) +
+  geom_boxplot(size = 0.1, varwidth = TRUE) +
+  stat_boxplot(geom = "errorbar", width = 0.2, size= 0.1)+
+  scale_y_continuous(breaks = pretty_breaks(n = 10))+ 
+  scale_fill_brewer(palette = "Set2")+
+  labs(title = "Read Distribution (CDS Exons) of Individual Thymus Datasets", x = "OSD-number", y = "cds exons(%)") +
+  theme_classic() +
+  theme(legend.position = "none")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+ggsave("RseQC_cds_exons_thymus_indivisual_datasets_MA.png", dpi = 300,
+       width = 6.7, height = 4, units = "in")
+
+
+# Box_plot2: thymus_RseQC_cds_exons by library kit
+ggplot(RseQC_read_distribution.thymus.metrics.df, aes(x = osd_num, y = cds_exons_pct, fill = osd_num)) +
+  geom_boxplot(size = 0.1, varwidth = TRUE) +
+  stat_boxplot(geom = "errorbar", width = 0.2, size= 0.1)+
+  facet_wrap(~library_kit, scales = "free_x", drop = TRUE)+
+  scale_y_continuous(breaks = pretty_breaks(n = 10))+ 
+  scale_fill_brewer(palette = "Set2") +
+  labs(title = "Read Distribution (CDS Exons) of Thymus Datasets by Library Kits", x = "OSD-number", y = "cds exons(%)") +
+  theme_classic() +
+  theme(legend.position = "none")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+ggsave("RseQC_cds_exons_thymus_libraryKits_MA.png", dpi = 300,
+       width = 6.7, height = 4, units = "in")
+
+
+
+## 5'UTRs---------------
+# Box_plot1: thymus_RseQC_5'UTRs_individual_datasets
+ggplot(RseQC_read_distribution.thymus.metrics.df, aes(x = osd_num, y = `5_utr_exons_pct`, fill = osd_num)) +
+  geom_boxplot(size = 0.1, varwidth = TRUE) +
+  stat_boxplot(geom = "errorbar", width = 0.2, size= 0.1)+
+  scale_y_continuous(breaks = pretty_breaks(n = 10))+ 
+  scale_fill_brewer(palette = "Set2")+
+  labs(title = "Read Distribution (5' UTRs) of Individual Thymus Datasets", x = "OSD-number", y = "5' UTRs (%)") +
+  theme_classic() +
+  theme(legend.position = "none")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+ggsave("RseQC_5UTRs_thymus_indivisual_datasets_MA.png", dpi = 300,
+       width = 6.7, height = 4, units = "in")
+
+
+# Box_plot2: thymus_RseQC_5'UTR by library kit
+ggplot(RseQC_read_distribution.thymus.metrics.df, aes(x = osd_num, y = `5_utr_exons_pct`, fill = osd_num)) +
+  geom_boxplot(size = 0.1, varwidth = TRUE) +
+  stat_boxplot(geom = "errorbar", width = 0.2, size= 0.1)+
+  facet_wrap(~library_kit, scales = "free_x", drop = TRUE)+
+  scale_y_continuous(breaks = pretty_breaks(n = 10))+ 
+  scale_fill_brewer(palette = "Set2") +
+  labs(title = "Read Distribution (5' UTRs) of Thymus Datasets by Library Kits", x = "OSD-number", y = "5' UTRs (%)") +
+  theme_classic() +
+  theme(legend.position = "none")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+ggsave("RseQC_5UTRs_thymus_libraryKits_MA.png", dpi = 300,
+       width = 6.7, height = 4, units = "in")
+
+## 3' UTRs --------------
+# Box_plot1: thymus_RseQC_3'UTRs_individual_datasets
+ggplot(RseQC_read_distribution.thymus.metrics.df, aes(x = osd_num, y = `3_utr_exons_pct`, fill = osd_num)) +
+  geom_boxplot(size = 0.1, varwidth = TRUE) +
+  stat_boxplot(geom = "errorbar", width = 0.2, size= 0.1)+
+  scale_y_continuous(breaks = pretty_breaks(n = 10))+ 
+  scale_fill_brewer(palette = "Set2")+
+  labs(title = "Read Distribution (3' UTRs) of Individual Thymus Datasets", x = "OSD-number", y = "3' UTRs (%)") +
+  theme_classic() +
+  theme(legend.position = "none")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+ggsave("RseQC_3UTRs_thymus_indivisual_datasets_MA.png", dpi = 300,
+       width = 6.7, height = 4, units = "in")
+
+
+# Box_plot2: thymus_RseQC_3'UTR by library kit
+ggplot(RseQC_read_distribution.thymus.metrics.df, aes(x = osd_num, y = `3_utr_exons_pct`, fill = osd_num)) +
+  geom_boxplot(size = 0.1, varwidth = TRUE) +
+  stat_boxplot(geom = "errorbar", width = 0.2, size= 0.1)+
+  facet_wrap(~library_kit, scales = "free_x", drop = TRUE)+
+  scale_y_continuous(breaks = pretty_breaks(n = 10))+ 
+  scale_fill_brewer(palette = "Set2") +
+  labs(title = "Read Distribution (3' UTRs) of Thymus Datasets by Library Kits", x = "OSD-number", y = "3' UTRs (%)") +
+  theme_classic() +
+  theme(legend.position = "none")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+ggsave("RseQC_3UTRs_thymus_libraryKits_MA.png", dpi = 300,
+       width = 6.7, height = 4, units = "in")
+
+
+## introns ------------
+# Box_plot1: thymus_RseQC_introns_individual_datasets
+ggplot(RseQC_read_distribution.thymus.metrics.df, aes(x = osd_num, y = introns_pct, fill = osd_num)) +
+  geom_boxplot(size = 0.1, varwidth = TRUE) +
+  stat_boxplot(geom = "errorbar", width = 0.2, size= 0.1)+
+  scale_y_continuous(breaks = pretty_breaks(n = 10))+ 
+  scale_fill_brewer(palette = "Set2")+
+  labs(title = "Read Distribution (Introns) of Individual Thymus Datasets", x = "OSD-number", y = "introns (%)") +
+  theme_classic() +
+  theme(legend.position = "none")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+ggsave("RseQC_introns_thymus_indivisual_datasets_MA.png", dpi = 300,
+       width = 6.7, height = 4, units = "in")
+
+
+# Box_plot2: thymus_RseQC_3'UTR by library kit
+ggplot(RseQC_read_distribution.thymus.metrics.df, aes(x = osd_num, y = introns_pct, fill = osd_num)) +
+  geom_boxplot(size = 0.1, varwidth = TRUE) +
+  stat_boxplot(geom = "errorbar", width = 0.2, size= 0.1)+
+  facet_wrap(~library_kit, scales = "free_x", drop = TRUE)+
+  scale_y_continuous(breaks = pretty_breaks(n = 10))+ 
+  scale_fill_brewer(palette = "Set2") +
+  labs(title = "Read Distribution (Introns) of Thymus Datasets by Library Kits", x = "OSD-number", y = "introns (%)") +
+  theme_classic() +
+  theme(legend.position = "none")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+ggsave("RseQC_introns_thymus_libraryKits_MA.png", dpi = 300,
+       width = 6.7, height = 4, units = "in")
+
+## tss_up 5 to 10 kb -------
+# Box_plot1: thymus_RseQC_tss_up5-10_individual_datasets
+ggplot(RseQC_read_distribution.thymus.metrics.df, aes(x = osd_num, y = tss_up_5kb_10kb_pct, fill = osd_num)) +
+  geom_boxplot(size = 0.1, varwidth = TRUE) +
+  stat_boxplot(geom = "errorbar", width = 0.2, size= 0.1)+
+  scale_y_continuous(breaks = pretty_breaks(n = 10))+ 
+  scale_fill_brewer(palette = "Set2")+
+  labs(title = "Read Distribution (TSS up 5-10 kb) of Individual thymus Datasets", x = "OSD-number", y = "tss up 5-10 kb (%)") +
+  theme_classic() +
+  theme(legend.position = "none")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+ggsave("RseQC_tssUp5-10_thymus_indivisual_datasets_MA.png", dpi = 300,
+       width = 6.7, height = 4, units = "in")
+
+
+# Box_plot2: thymus_RseQC_introns by library kit
+ggplot(RseQC_read_distribution.thymus.metrics.df, aes(x = osd_num, y = tss_up_5kb_10kb_pct, fill = osd_num)) +
+  geom_boxplot(size = 0.1, varwidth = TRUE) +
+  stat_boxplot(geom = "errorbar", width = 0.2, size= 0.1)+
+  facet_wrap(~library_kit, scales = "free_x", drop = TRUE)+
+  scale_y_continuous(breaks = pretty_breaks(n = 10))+ 
+  scale_fill_brewer(palette = "Set2") +
+  labs(title = "Read Distribution (TSS up 5-10 kb) of Thymus Datasets by Library Kits", x = "OSD-number", y = "tss up 5-10 kb (%)") +
+  theme_classic() +
+  theme(legend.position = "none")+
+  theme(plot.title = element_text(hjust = 0.5))
+
+ggsave("RseQC_tssUp5_thymus_libraryKits_MA.png", dpi = 300,
+       width = 6.7, height = 4, units = "in")
+
