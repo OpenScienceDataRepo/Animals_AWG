@@ -1,49 +1,64 @@
-#load library
+# load libraries
 library(ggplot2)
 library(tidyverse)
 library(scales)
 library(RColorBrewer)
 
-#load data
+# load QC dataset
 gastroc.metrics.df <- read_csv("gastrocnemius_qc_metrics.csv")
 
-#prepare data for genome mapping
- genome.alignment.gastroc.metrics.df <- gastroc.metrics.df %>% select(osd_num,uniquely_mapped_percent,multimapped_percent,multimapped_toomany_percent,unmapped_tooshort_percent, unmapped_other_percent)
+# prepare data for genome mapping
+genome.alignment.gastroc.metrics.df <- gastroc.metrics.df %>%
+    select(osd_num,uniquely_mapped_percent,multimapped_percent,multimapped_toomany_percent,unmapped_tooshort_percent, unmapped_other_percent)
 
- #Add a new column for library_kit
- genome.alignment.gastroc.metrics.df <-  genome.alignment.gastroc.metrics.df %>%
-   mutate(library_kit= recode(osd_num,
-                              "OSD-401"="polyA-nonUPX kit",
-                              "OSD-101"="ribo-deplete kit",
-                              "OSD-419"="polyA-UPX kit"))
+# hard-coded OSD and kit orders
+osd_order <- c("OSD-401", "OSD-419", "OSD-101")
+kit_order <- c("polyA-nonUPX kit", "polyA-UPX kit", "ribo-deplete kit")
+
+# add a new column for library_kit
+genome.alignment.gastroc.metrics.df <- genome.alignment.gastroc.metrics.df %>%
+mutate(
+    osd_num = factor(osd_num, levels = osd_order),
+    library_kit= recode(osd_num,
+                        "OSD-401"="polyA-nonUPX kit",
+                        "OSD-101"="ribo-deplete kit",
+                        "OSD-419"="polyA-UPX kit"),
+    library_kit = factor(library_kit, levels = kit_order)
+)
 
 # Box_plot1: percentage of uniquely mapped data by library kit
- ggplot(genome.alignment.gastroc.metrics.df, aes(x = osd_num, y= uniquely_mapped_percent, fill = osd_num)) +
-   geom_boxplot(linewidth = 0.1, varwidth = TRUE) +
-   stat_boxplot(geom = "errorbar", width = 0.2, size= 0.1)+
-   facet_wrap(~library_kit, scales = "free_x", drop = TRUE)+
-   scale_y_continuous(breaks = pretty_breaks(n = 8))+
-   scale_fill_brewer(palette = "Set2")+
-   labs(title = "Uniquely Mapped Percentage of Gastroc Datasets by Library Kits", x = "OSD-number", y = "Uniquely mapped (%)") +
-   theme_classic() +
-   theme(legend.position = "none")+
-   theme(plot.title = element_text(hjust = 0.5))
+ggplot(genome.alignment.gastroc.metrics.df, aes(x = osd_num, y= uniquely_mapped_percent, fill = osd_num)) +
+    geom_boxplot(linewidth = 0.1, varwidth = TRUE) +
+    stat_boxplot(geom = "errorbar", width = 0.2, size= 0.1)+
+    facet_wrap(~library_kit, scales = "free_x", drop = TRUE)+
+    scale_y_continuous(breaks = pretty_breaks(n = 8))+
+    scale_fill_brewer(palette = "Set2")+
+    labs(title = "Uniquely Mapped Percentage of Gastroc Datasets by Library Kits", x = "OSD-number", y = "Uniquely mapped (%)") +
+    theme_classic() +
+    theme(legend.position = "none")+
+    theme(
+        plot.title = element_text(hjust = 0.5, size = 11),
+        plot.title.position = "plot"
+    )
 
- ggsave("genome_uniquely_mapped_gastroc_LibraryKits_SAC.png", dpi = 300,
-        width = 7, height = 4, units = "in")
+ggsave("genome_uniquely_mapped_gastroc_LibraryKits_SAC.png", dpi = 300,
+    width = 7, height = 4, units = "in")
 
 
- # Box_plot2: percentage of total mapped data by library kit
- ggplot(genome.alignment.gastroc.metrics.df, aes(x = osd_num, y= 100 - (unmapped_tooshort_percent + unmapped_other_percent), fill = osd_num)) +
-   geom_boxplot(linewidth = 0.1, varwidth = TRUE) +
-   stat_boxplot(geom = "errorbar", width = 0.2, size= 0.1)+
-   facet_wrap(~library_kit, scales = "free_x", drop = TRUE)+
-   scale_y_continuous(breaks = pretty_breaks(n = 10))+
-   scale_fill_brewer(palette = "Set2")+
-   labs(title = "Total Mapped Percentage of Gastroc Datasets by Library Kits", x = "OSD-number", y = "Total mapped (%)") +
-   theme_classic() +
-   theme(legend.position = "none")+
-   theme(plot.title = element_text(hjust = 0.5))
+# Box_plot2: percentage of total mapped data by library kit
+ggplot(genome.alignment.gastroc.metrics.df, aes(x = osd_num, y= 100 - (unmapped_tooshort_percent + unmapped_other_percent), fill = osd_num)) +
+    geom_boxplot(linewidth = 0.1, varwidth = TRUE) +
+    stat_boxplot(geom = "errorbar", width = 0.2, size= 0.1)+
+    facet_wrap(~library_kit, scales = "free_x", drop = TRUE)+
+    scale_y_continuous(breaks = pretty_breaks(n = 10))+
+    scale_fill_brewer(palette = "Set2")+
+    labs(title = "Total Mapped Percentage of Gastroc Datasets by Library Kits", x = "OSD-number", y = "Total mapped (%)") +
+    theme_classic() +
+    theme(legend.position = "none")+
+    theme(
+        plot.title = element_text(hjust = 0.5, size = 11),
+        plot.title.position = "plot"
+    )
 
- ggsave("genome_total_mapped_gastroc_LibraryKits_SAC.png", dpi = 300,
-        width = 7, height = 4, units = "in")
+ggsave("genome_total_mapped_gastroc_LibraryKits_SAC.png", dpi = 300,
+    width = 7, height = 4, units = "in")
